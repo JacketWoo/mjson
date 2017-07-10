@@ -1,0 +1,19 @@
+The format requirement:
+1. key must be in a pair of quotes.
+  for example: 
+    {"age": 16}     OK
+    {age: 16}       WRONG
+2. value only support string, integer and jason
+  for example:
+    {"name": "wxf"}                     value is "wxf", string type
+    {"age" : 20}                        value is 20, integer type, not within a pair of double quotes
+    {"a" : {"b" : "c"}}                 value is json
+    {"a" : [{"b":"c", "d":"e"}]}        value is json array
+3. every element in the json must be represented by a kv. otherwise wrong
+  for example:
+    {"a":"b"}           OK
+    {"a":"b", "c"}      WRONG 
+4. every json array can only contains json, otherwise is wrong
+  for example:
+    [{"a":"b"},{"c":"c"}]        OK
+    ["a":{"c":"d"}]              WRONG
