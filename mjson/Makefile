@@ -1,7 +1,7 @@
 CXX = g++
 #CXXFLAGS = -Wall -W -Wno-unused-parameter -pg -g -O0 -D__STDC_FORMAT_MACROS -fPIC -std=c++11
 #CXXFLAGS = -O0 -g -pg -pipe -fPIC -W -DTEST -DDEBUG -Wwrite-strings -Wpointer-arith -Wreorder -Wredundant-decls -Wformat -Wall -Wno-unused-parameter -D_GNU_SOURCE -D__STDC_FORMAT_MACROS -std=c++11 -Wno-redundant-decls
-CXXFLAGS = -O0 -g -fPIC -W -DTEST -DDEBUG -Wwrite-strings -Wpointer-arith -Wreorder -Wredundant-decls -Wformat -Wall -Wno-unused-parameter -D_GNU_SOURCE -D__STDC_FORMAT_MACROS -std=c++11 -Wno-redundant-decls
+CXXFLAGS = -O2 -g -fPIC -W -DTEST -DDEBUG -Wwrite-strings -Wpointer-arith -Wreorder -Wredundant-decls -Wformat -Wall -Wno-unused-parameter -D_GNU_SOURCE -D__STDC_FORMAT_MACROS -std=c++11 -Wno-redundant-decls
 
 OBJECT = mjson
 OUTPUT = ./output

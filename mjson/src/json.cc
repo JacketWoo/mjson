@@ -1,4 +1,4 @@
-#include "mjson.h"
+#include "json.h"
 
 #include <string.h>
 
@@ -245,6 +245,62 @@ std::string Json::Encode() const {
     return EncodeArrayJson();
   }
   return "";
+}
+
+int32_t Json::GetJsonValue(const std::string& field,
+                           Json* j_v) const {
+  if (!j_v) {
+    return -1;
+  }
+  const JsonElement* p_ele = GetEle(field, JsonElementType::kJson);
+  if (!p_ele) {
+    return -1;
+  }
+  *j_v = *p_ele->value.v_json;
+  return 0;
+}
+
+int32_t Json::GetStrValue(const std::string& field,
+                          std::string* s_v) const {
+  if (!s_v) {
+    return -1;
+  }
+  const JsonElement* p_ele = GetEle(field, JsonElementType::kStr);
+  if (!p_ele) {
+    return -1;
+  }
+  *s_v = *p_ele->value.v_str;
+  return 0;
+}
+
+int32_t Json::GetIntValue(const std::string& field,
+                          int32_t* i_v) const {
+  if(!i_v) {
+    return -1;
+  }
+  const JsonElement* p_ele = GetEle(field, JsonElementType::kInt);
+  if (!p_ele) {
+    return -1;
+  }
+  *i_v = p_ele->value.v_int;
+  return 0;
+}
+
+const JsonElement* Json::GetEle(const std::string& field,
+                       JsonElementType ele_type) const {
+  if (type_ != JsonType::kSingle) {
+    return NULL;
+  }
+  for (const JsonElement& ele : *value_.s_json) {
+    if (ele.field != field) {
+      continue;
+    }
+    if (ele.type != ele_type) {
+      return NULL;
+    }
+    return &ele; 
+  }
+  return NULL;
 }
 
 std::string Json::EncodeSingleJson() const {

@@ -2,7 +2,7 @@
 #include <string.h>
 #include <iostream>
 
-#include "mjson.h"
+#include "json.h"
 
 
 void Usage() {

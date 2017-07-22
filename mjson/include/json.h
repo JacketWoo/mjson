@@ -53,7 +53,11 @@ public:
   int32_t AddJson(const Json& json);
   void Clear();
   std::string GetHstr(uint32_t indent = 0) const;
-  std::string Encode() const;
+  std::string Encode() const; 
+  int32_t GetJsonValue(const std::string& field, Json* j_v) const;
+  int32_t GetStrValue(const std::string& field, std::string* s_v) const;
+  int32_t GetIntValue(const std::string& field, int32_t* i_v) const;
+  
 
   JsonType type() const {
     return type_;
@@ -71,6 +75,8 @@ private:
 
   std::string EncodeArrayJson() const;
   std::string EncodeSingleJson() const;
+
+  const JsonElement* GetEle(const std::string& field, JsonElementType ele_type) const;
 
   JsonType type_;
   union {
