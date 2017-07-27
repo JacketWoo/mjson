@@ -460,7 +460,8 @@ Json* JsonInterpreter::DecodeJson(const std::string& str,
         /*
          * not consider the non-numeric num is invalid, e.g. 12mdf will result in 12mdf
          */
-        json_ele.value.v_int = atoi(int_str.c_str());
+        json_ele.value.v_int = atoi(int_str.c_str()); /* if the value is null, will convert to 0 */
+        st_v = false;
         ed_v = true;
       } else if (json_ele.type == JsonElementType::kEnone
           && !json_ele.field.empty()) {
