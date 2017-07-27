@@ -165,6 +165,22 @@ int32_t Json::AddJsonElement(const JsonElement& json_ele) {
   return 0;
 }
 
+int32_t Json::AddStr(const std::string& field, const std::string& value) {
+  JsonElement ele;
+  ele.type = JsonElementType::kStr;
+  ele.field = field;
+  ele.value.v_str = new std::string(value);
+  return AddJsonElement(ele);
+}
+
+int32_t Json::AddInt(const std::string& field, const int32_t value) {
+  JsonElement ele;
+  ele.type = JsonElementType::kInt;
+  ele.field = field;
+  ele.value.v_int = value;
+  return AddJsonElement(ele);
+}
+
 int32_t Json::AddJson(const Json& json) {
   if (type_ != JsonType::kArray) {
     return -1;

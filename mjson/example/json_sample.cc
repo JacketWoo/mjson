@@ -6,7 +6,7 @@
 
 
 void Usage() {
-  fprintf(stderr, "Usage:\n\t ./mjson_sample mjson_file");
+  fprintf(stderr, "Usage:\n\t ./mjson_sample mjson_file\n");
 }
 
 uint32_t ReadByte(char* buf, uint32_t num, FILE* fp) {
