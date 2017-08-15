@@ -56,15 +56,17 @@ int main(int argc, char* argv[]) {
   fseek(fp, 0, SEEK_SET);
   if (fsize < 0) {
     fprintf(stderr, "ftell error: %s\n", strerror(errno));
+    fclose(fp);
     return -1;
   }
   char *buf = reinterpret_cast<char*>(calloc(fsize+1, 1));
   if (!buf) {
     fprintf(stderr, "cmalloc failed, error: %s\n", strerror(errno));
+    fclose(fp);
     return -1;
   }
   if (!ReadByte(buf, fsize, fp)) {
-    delete buf;
+    free(buf);
     return -1;
   }
  
@@ -72,7 +74,7 @@ int main(int argc, char* argv[]) {
   mjson::Json json;  
 
   std::string json_str(buf, fsize);
-  delete buf;
+  free(buf);
   TrimSpace(&json_str);
 
   if (j_ipt.Decode(json_str, &json) == -1) {
