@@ -33,7 +33,7 @@ struct JsonElement {
   JsonElementType type;
   union {
     std::string *v_str;
-    uint32_t v_int;
+    int64_t v_int;
     Json* v_json;
   } value;
 };
@@ -52,6 +52,7 @@ public:
   int32_t AddJsonElement(const JsonElement& json_ele);
   int32_t AddStr(const std::string& field, const std::string& value);
   int32_t AddInt(const std::string& field, const int32_t value);
+  int32_t AddLongLong(const std::string& field, const int64_t value);
   int32_t AddJson(const Json& json);
   void Clear();
   std::string GetHstr(uint32_t indent = 0) const;
@@ -59,6 +60,7 @@ public:
   int32_t GetJsonValue(const std::string& field, Json* j_v) const;
   int32_t GetStrValue(const std::string& field, std::string* s_v) const;
   int32_t GetIntValue(const std::string& field, int32_t* i_v) const;
+  int32_t GetLongLongValue(const std::string& field, int64_t* ll_v) const;
   
 
   JsonType type() const {
