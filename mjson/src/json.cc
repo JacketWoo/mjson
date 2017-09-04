@@ -179,7 +179,7 @@ int32_t Json::AddStr(const std::string& field, const std::string& value) {
   return AddJsonElement(ele);
 }
 
-int32_t Json::AddInt(const std::string& field, const int32_t value) {
+int32_t Json::AddInt(const std::string& field, const int64_t value) {
   JsonElement ele;
   ele.type = JsonElementType::kInt;
   ele.field = field;
@@ -187,15 +187,15 @@ int32_t Json::AddInt(const std::string& field, const int32_t value) {
   return AddJsonElement(ele);
 }
 
-int32_t Json::AddLongLong(const std::string& field, const int64_t value) {
-  JsonElement ele;
-  ele.type = JsonElementType::kInt;
-  ele.field = field;
-  ele.value.v_int = value;
-  return AddJsonElement(ele);
+int32_t Json::AddJson(const std::string& field, const Json& json) {
+	JsonElement ele;
+	ele.type = JsonElementType::kJson;
+	ele.field = field;
+	ele.value.v_json = new Json(json);
+	return AddJsonElement(ele);
 }
 
-int32_t Json::AddJson(const Json& json) {
+int32_t Json::PushJson(const Json& json) {
   if (type_ != JsonType::kArray) {
     return -1;
   }
@@ -313,7 +313,7 @@ int32_t Json::GetStrValue(const std::string& field,
 }
 
 int32_t Json::GetIntValue(const std::string& field,
-                          int32_t* i_v) const {
+                          int64_t* i_v) const {
   if(!i_v) {
     return -1;
   }
@@ -322,19 +322,6 @@ int32_t Json::GetIntValue(const std::string& field,
     return -1;
   }
   *i_v = p_ele->value.v_int;
-  return 0;
-}
-
-int32_t Json::GetLongLongValue(const std::string& field,
-                          int64_t* ll_v) const {
-  if(!ll_v) {
-    return -1;
-  }
-  const JsonElement* p_ele = GetEle(field, JsonElementType::kInt);
-  if (!p_ele) {
-    return -1;
-  }
-  *ll_v = p_ele->value.v_int;
   return 0;
 }
 
@@ -614,7 +601,7 @@ Json* JsonInterpreter::DecodeArrayJson(const std::string& str,
         delete a_json;
         return NULL;
       }
-      a_json->AddJson(*ele_json);
+      a_json->PushJson(*ele_json);
     } else {
       return NULL;
     }
