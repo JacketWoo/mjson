@@ -302,6 +302,15 @@ int32_t Json::GetIntValue(const std::string& field,
   return 0;
 }
 
+bool Json::HasField(const std::string& field) const {
+  for (const JsonElement& ele : *value_.s_json) {
+    if (ele.field == field) {
+      return true;
+    }
+  }
+  return false;
+}
+
 const JsonElement* Json::GetEle(const std::string& field,
                        JsonElementType ele_type) const {
   if (type_ != JsonType::kSingle) {
