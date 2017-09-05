@@ -313,6 +313,16 @@ int32_t Json::GetStrValue(const std::string& field,
 }
 
 int32_t Json::GetIntValue(const std::string& field,
+                          int32_t* i_v) const {
+	int64_t ill;
+	if (GetIntValue(field, &ill) == -1) {
+		return -1;
+	}
+	*i_v = static_cast<int32_t>(ill);
+  return 0;
+}
+
+int32_t Json::GetIntValue(const std::string& field,
                           int64_t* i_v) const {
   if(!i_v) {
     return -1;

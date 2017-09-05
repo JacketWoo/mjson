@@ -67,6 +67,7 @@ public:
   int32_t GetJsonValue(const std::string& field, Json* j_v) const;
   int32_t GetStrValue(const std::string& field, std::string* s_v) const;
   int32_t GetIntValue(const std::string& field, int64_t* i_v) const;
+	int32_t GetIntValue(const std::string& field, int32_t* i_v) const;
 
   bool HasField(const std::string& field) const; 
 
