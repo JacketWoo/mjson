@@ -598,6 +598,7 @@ Json* JsonInterpreter::DecodeJson(const std::string& str,
     delete json;
     return NULL;
   }
+  delete json;
   return NULL;
 }
 
