@@ -467,6 +467,7 @@ int32_t JsonInterpreter::Decode(const std::string& str, Json* json) {
     return -1;
   }
   *json = *tmp;
+  delete tmp;
   return 0;
 }
 
@@ -623,6 +624,7 @@ Json* JsonInterpreter::DecodeArrayJson(const std::string& str,
       }
       a_json->PushJson(*ele_json);
     } else {
+      delete a_json;
       return NULL;
     }
   }
