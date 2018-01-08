@@ -614,19 +614,24 @@ Json* JsonInterpreter::DecodeArrayJson(const std::string& str,
     if (*iter == RIGHT_MID_BRACE_C) {
       return a_json;
     }
-    if (*iter == RIGHT_MID_BRACE_C) {
-      ele_json = DecodeArrayJson(str, iter);
-    } else if (*iter == LEFT_LARGE_BRACE_C) {
-      ele_json = DecodeJson(str, iter);
-      if (!ele_json) {
-        delete a_json;
-        return NULL;
-      }
-      a_json->PushJson(*ele_json);
-    } else {
+    if (*iter != LEFT_MID_BRACE_C
+        && *iter != LEFT_LARGE_BRACE_C) {
       delete a_json;
       return NULL;
     }
+
+    if (*iter == LEFT_MID_BRACE_C) {
+      ele_json = DecodeArrayJson(str, iter);
+    } else if (*iter == LEFT_LARGE_BRACE_C) {
+      ele_json = DecodeJson(str, iter);
+    }
+    if (!ele_json) {
+      delete a_json;
+      return NULL;
+    }
+    a_json->PushJson(*ele_json);
+    delete ele_json;
+    ele_json = NULL;
   }
   delete a_json;
   return NULL;
