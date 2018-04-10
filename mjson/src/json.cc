@@ -103,6 +103,9 @@ Json::Json(const JsonType t) :
   case JsonType::kArray:
     value_.a_json = new ArrayJson();
     break;
+  case JsonType::kStrItem:
+    value_.str_item = new std::string();
+    break;
   default:
     break;
   }
@@ -118,6 +121,9 @@ Json::Json(const Json& json) :
   case JsonType::kArray:
     value_.a_json = new ArrayJson(*json.array_json());
     break;
+  case JsonType::kStrItem:
+    value_.str_item = new std::string(*json.str_item());
+    break;
   default:
     break;
   }
@@ -131,6 +137,8 @@ Json& Json::operator=(const Json& json) {
   case JsonType::kArray:
     delete value_.a_json;
     break;
+  case JsonType::kStrItem:
+    delete value_.str_item;
   default:
     break;
   }
@@ -144,6 +152,8 @@ Json& Json::operator=(const Json& json) {
   case JsonType::kArray:
     value_.a_json = new ArrayJson(*json.array_json());
     break;
+  case JsonType::kStrItem:
+    value_.str_item = new std::string(*json.str_item());
   default:
     break;
   }
@@ -158,6 +168,8 @@ Json::~Json() {
   case JsonType::kArray:
     delete value_.a_json;
     break;
+  case JsonType::kStrItem:
+    delete value_.str_item;
   default:
     break;
   }
@@ -203,6 +215,14 @@ int32_t Json::PushJson(const Json& json) {
   return 0;
 }
 
+int32_t Json::SetStrItem(const std::string& str_item) {
+  if (type_ != JsonType::kStrItem) {
+    return -1;
+  }
+  value_.str_item->assign(str_item);
+  return 0;
+}
+
 void Json::Clear() {
   switch (type_) {
   case JsonType::kSingle:
@@ -210,6 +230,9 @@ void Json::Clear() {
     break;
   case JsonType::kArray:
     value_.a_json->clear();
+    break;
+  case JsonType::kStrItem:
+    value_.str_item->clear();
     break;
   default:
     break;
@@ -223,7 +246,19 @@ std::string Json::GetHstr(uint32_t indent) const {
   if (type_ == JsonType::kSingle) {
     return GetSingleJsonHstr(*value_.s_json, indent);
   }
-  return GetArrayJsonHstr(*value_.a_json, indent);
+  if (type_ == JsonType::kArray) {
+    return GetArrayJsonHstr(*value_.a_json, indent);
+  }
+  if (type_ == JsonType::kStrItem) {
+    return GetStrItemJsonHstr(*value_.str_item, indent);
+  }
+  return "";
+}
+
+std::string Json::GetStrItemJsonHstr(const std::string& str_item, uint32_t indent) const {
+  std::string indent_str(indent, TAB_C);
+  std::string str = indent_str + JsonInterpreter::QUOTE_C + str_item + JsonInterpreter::QUOTE_C;
+  return str;
 }
 
 std::string Json::GetArrayJsonHstr(const ArrayJson& a_json, uint32_t indent) const {
@@ -282,6 +317,8 @@ std::string Json::Encode() const {
     return EncodeSingleJson();
   } else if (type_ == JsonType::kArray) {
     return EncodeArrayJson();
+  } else if (type_ == JsonType::kStrItem) {
+    return EncodeStrItemJson();
   }
   return "";
 }
@@ -403,6 +440,10 @@ std::string Json::EncodeArrayJson() const {
     str.erase(str.size()-1);
   }
   return JsonInterpreter::LEFT_MID_BRACE_C + str + JsonInterpreter::RIGHT_MID_BRACE_C;
+}
+
+std::string Json::EncodeStrItemJson() const {
+  return JsonInterpreter::QUOTE_C + *value_.str_item + JsonInterpreter::QUOTE_C;
 }
 
 int32_t JsonInterpreter::ValidCheck(const std::string& str) {
@@ -603,6 +644,22 @@ Json* JsonInterpreter::DecodeJson(const std::string& str,
   return NULL;
 }
 
+Json* JsonInterpreter::DecodeStrJson(const std::string& str,
+                                     std::string::const_iterator& iter) {
+  ++iter;
+  Json* json = new Json(JsonType::kStrItem);
+  std::string str_item;
+  for (; iter != str.end(); ++iter) {
+    if (*iter == QUOTE_C && *(iter - 1) != '\\') {
+      json->SetStrItem(str_item);
+      return json;
+    }
+    str_item.append(1, *iter);
+  }
+  delete json;
+  return NULL;
+}
+
 Json* JsonInterpreter::DecodeArrayJson(const std::string& str,
                       std::string::const_iterator& iter) {
   Json *a_json = new Json(JsonType::kArray), *ele_json = NULL;
@@ -615,7 +672,8 @@ Json* JsonInterpreter::DecodeArrayJson(const std::string& str,
       return a_json;
     }
     if (*iter != LEFT_MID_BRACE_C
-        && *iter != LEFT_LARGE_BRACE_C) {
+      && *iter != LEFT_LARGE_BRACE_C
+      && *iter != QUOTE_C) {
       delete a_json;
       return NULL;
     }
@@ -624,6 +682,8 @@ Json* JsonInterpreter::DecodeArrayJson(const std::string& str,
       ele_json = DecodeArrayJson(str, iter);
     } else if (*iter == LEFT_LARGE_BRACE_C) {
       ele_json = DecodeJson(str, iter);
+    } else if (*iter == QUOTE_C) {
+      ele_json = DecodeStrJson(str, iter);
     }
     if (!ele_json) {
       delete a_json;

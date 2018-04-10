@@ -16,7 +16,8 @@ enum JsonElementType {
 enum JsonType {
   kJnone = 0,
   kSingle,
-  kArray
+  kArray,
+  kStrItem
 };
 
 class Json;
@@ -49,17 +50,22 @@ public:
   Json& operator=(const Json& json);
   virtual ~Json();
 
-	/*
-	 * for single json
-	 */
+  /*
+   * for single json
+   */
   int32_t AddJsonElement(const JsonElement& json_ele);
   int32_t AddStr(const std::string& field, const std::string& value);
   int32_t AddInt(const std::string& field, const int64_t value);
-	int32_t AddJson(const std::string& field, const Json& json);
+  int32_t AddJson(const std::string& field, const Json& json);
   /*
-	 * for json array
-	 */
+   * for json array
+   */
   int32_t PushJson(const Json& json);
+
+  /*
+   * for str item
+   */
+  int32_t SetStrItem(const std::string& str_item);
 
   void Clear();
   std::string GetHstr(uint32_t indent = 0) const;
@@ -67,7 +73,7 @@ public:
   int32_t GetJsonValue(const std::string& field, Json* j_v) const;
   int32_t GetStrValue(const std::string& field, std::string* s_v) const;
   int32_t GetIntValue(const std::string& field, int64_t* i_v) const;
-	int32_t GetIntValue(const std::string& field, int32_t* i_v) const;
+  int32_t GetIntValue(const std::string& field, int32_t* i_v) const;
 
   bool HasField(const std::string& field) const; 
 
@@ -80,13 +86,18 @@ public:
   const ArrayJson* array_json() const {
     return value_.a_json;
   }
+  const std::string* str_item() const {
+    return value_.str_item;
+  }
 
 private:
   std::string GetArrayJsonHstr(const ArrayJson& a_json, uint32_t indent = 0) const;
   std::string GetSingleJsonHstr(const SingleJson& s_json, uint32_t indent = 0) const;
+  std::string GetStrItemJsonHstr(const std::string& str_item, uint32_t indent = 0) const;
 
   std::string EncodeArrayJson() const;
   std::string EncodeSingleJson() const;
+  std::string EncodeStrItemJson() const;
 
   const JsonElement* GetEle(const std::string& field, JsonElementType ele_type) const;
 
@@ -94,6 +105,7 @@ private:
   union {
     SingleJson* s_json;
     ArrayJson* a_json;
+    std::string* str_item;
   } value_;
 };
 
@@ -117,6 +129,8 @@ private:
                         std::string::const_iterator& iter);
   Json* DecodeJson(const std::string& str,
                    std::string::const_iterator& iter);
+  Json* DecodeStrJson(const std::string& str,
+                      std::string::const_iterator& iter);
 
   int32_t ValidCheck(const std::string& str);
 };

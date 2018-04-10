@@ -82,10 +82,10 @@ int main(int argc, char* argv[]) {
     return -1;
   }
   std::cout << "origin json:" << std::endl;
-  std::cout << json.GetHstr() << std::endl;
+  std::cout << json.GetHstr() << std::endl << std::endl;
   
   json_str = json.Encode();
-  std::cout << json_str << std::endl;
+  std::cout << json_str << std::endl << std::endl;
   if (j_ipt.Decode(json_str, &json) == -1) {
     fprintf(stderr, "decode failed2\n"); 
     return -1;
